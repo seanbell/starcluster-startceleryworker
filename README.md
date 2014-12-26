@@ -31,7 +31,7 @@ queue = celery
 </pre>
 
 Note that you can have multiple plugins with different names (e.g.
-`[plugin start_gpu_celery_worker]`, `[plugin start_cpu_celery_worker']).
+`[plugin start_gpu_celery_worker]`, `[plugin start_cpu_celery_worker']`).
 
 ### Other options for start_celery_worker:
 <pre>
