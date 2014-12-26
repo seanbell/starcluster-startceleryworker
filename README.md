@@ -13,16 +13,16 @@ setup_class = celery_worker.StartCeleryWorker
 # submodules will be updated.
 git_sync_dir = ~/repo
 
-# the directory where the celery worker will run
+# Directory where the celery worker will run
 worker_dir = ~/repo/code
 
-# location of the celery package (used by the -A argument for celery)
+# Python package containing the celery app (used by the -A argument for celery)
 app = my.celery.app
 
-# name of the celery queue (celery is the default queue name)
+# Name of the celery queue (celery is the default queue name)
 queue = celery
 
-# number of worker processes to run (or None to run all processes)
+# Number of worker processes to run (None to use all processes)
 concurrency = None
 
 [plugin kill_celery_worker]
