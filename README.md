@@ -1,7 +1,7 @@
-starcluster-plugins
-===================
+StartCeleryWorker
+=================
 
-My plugins for starcluster.
+A plugin to start celery workers on every node of a StarCluster cluster.
 
 ### Typical configuration:
 Add this to your `~/.starcluster/config` file:
