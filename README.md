@@ -19,7 +19,7 @@ worker_dir = ~/repo/code
 # location of the celery package (used by the -A argument for celery)
 app = my.celery.app
 
-# name of the celery queue
+# name of the celery queue (celery is the default queue name)
 queue = celery
 
 # number of worker processes to run (or None to run all processes)
