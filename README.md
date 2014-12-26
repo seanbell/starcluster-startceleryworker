@@ -8,7 +8,8 @@ My plugins for starcluster.
 [plugin start_celery_worker]
 setup_class = celery_worker.StartCeleryWorker
 
-# The base of the git code repository that the workers use.  The repo and all submodules will be updated.
+# The base of the git code repository that the workers use.  The repo and all
+# submodules will be updated.
 git_sync_dir = ~/repo
 
 # the directory where the celery worker will run
