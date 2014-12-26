@@ -23,41 +23,70 @@ class WorkerSetup(ClusterSetup):
 
 class StartCeleryWorker(WorkerSetup):
 
-    def __init__(self, code_dir, worker_dir, package, queue, concurrency,
-                 celery_cmd='celery', remount_dir=None,
-                 ld_library_path='/usr/local/lib'):
+    def __init__(
+            self,
+            git_sync_dir,
+            worker_dir,
+            remount_dir=None,
+            queue='celery',
+            celery_cmd='celery',
+            concurrency=None,
+            app=None,
+            broker=None,
+            ld_library_paths=['/usr/local/lib'],
+            heartbeat_interval=5,
+            maxtasksperchild=1,
+            Ofair=True,
+            loglevel='info',
+    ):
 
-        if int(concurrency) > 0:
-            concurrency_opt = "--concurrency=%s" % concurrency
+        if git_sync_dir:
+            self._sync_cmd = "; ".join([
+                "sudo mount -o remount '%s'" % remount_dir if remount_dir else "echo no remount",
+                "cd %s" % git_sync_dir,
+                "git pull",
+                "git submodule init",
+                "git submodule update",
+            ])
         else:
-            concurrency_opt = ""
+            self._sync_cmd = None
 
-        session = "celery-%s" % queue
-        node_name = "$(hostname)-%s" % queue
+        celery_args = [celery_cmd]
+        celery_args += ['--hostname', '%h-' + queue]
+        if app:
+            celery_args += ['--app', app]
+        if broker:
+            celery_args += ['--broker', broker]
+        if maxtasksperchild:
+            celery_args += ['--maxtasksperchild', maxtasksperchild]
+        if Ofair:
+            celery_args += ['-Ofair']
+        if concurrency:
+            celery_args += ['--concurrency', concurrency]
+        if loglevel:
+            celery_args += ['--loglevel', loglevel]
+        if heartbeat_interval:
+            celery_args += ['--heartbeat-interval', heartbeat_interval]
+
         celery_cmd = "; ".join([
-            "export LD_LIBRARY_PATH=ld_library_path:$LD_LIBRARY_PATH",
-            "cd %s" % worker_dir,
-            "%s worker -A %s -Q %s -l info --maxtasksperchild=1 -Ofair --heartbeat-interval=60 %s -n %s" % (
-                celery_cmd, package, queue, concurrency_opt, node_name),
+            "export LD_LIBRARY_PATH=\"" + ':'.join(ld_library_paths) + ":$LD_LIBRARY_PATH\"",
+            "cd \"%s\"" % worker_dir,
+            ' '.join(celery_args),
         ])
-        self._sync_cmd = "; ".join([
-            "sudo mount -o remount '%s'" % remount_dir if remount_dir else "echo 'no remount'",
-            "cd %s" % code_dir,
-            "git pull",
-            "git submodule init",
-            "git submodule update",
-        ])
+
+        tmux_session = "celery-" + queue
         self._start_cmd = "; ".join([
-            "tmux kill-session -t %s" % session,
-            "sudo mount -o remount '%s'" % remount_dir if remount_dir else "echo 'no remount'",
-            "tmux new-session -s %s -d '%s'" % (session, celery_cmd),
+            "tmux kill-session -t '%s'" % tmux_session,
+            "sudo mount -o remount '%s'" % remount_dir if remount_dir else "echo no remount",
+            "tmux new-session -s '%s' -d '%s'" % (tmux_session, celery_cmd),
         ])
 
     def on_add_node(self, node, nodes, master, user, user_shell, volumes):
         run_cmd(node, self._start_cmd)
 
     def run(self, nodes, master, user, user_shell, volumes):
-        run_cmd(master, self._sync_cmd, silent=False)
+        if self._sync_cmd:
+            run_cmd(master, self._sync_cmd, silent=False)
         for node in nodes:
             self.pool.simple_job(
                 run_cmd, args=(node, self._start_cmd), jobid=node.alias)
@@ -67,8 +96,8 @@ class StartCeleryWorker(WorkerSetup):
 class KillCeleryWorker(WorkerSetup):
 
     def __init__(self, queue):
-        session = "celery-%s" % queue
-        self._kill_cmd = "tmux kill-session -t %s" % session
+        tmux_session = "celery-" + queue
+        self._kill_cmd = "tmux kill-session -t '%s'" % tmux_session
 
     def run(self, nodes, master, user, user_shell, volumes):
         for node in nodes:
