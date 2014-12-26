@@ -52,15 +52,15 @@ starcluster runplugin stop_celery_worker cluster_name
 ### Other options for start_celery_worker:
 Include these under `[plugin start_gpu_celery_worker]`:
 <pre>
-# use a different command to start celery, such as with a venv (with respect to
+# Use a different command to start celery, such as with a venv (with respect to
 # the path worker_dir)
 celery_cmd = ../venv/bin/celery
 
-# remount the base directory of the NFS filesystem, to be remounted before
+# Remount the base directory of the NFS filesystem, to be remounted before
 # any code is run (this helps ensure it is up to date)
 remount_dir = /home
 
-# use a different broker than the one specified in your config
+# Use a different broker than the one specified in your config
 broker = 'amqp://guest@localhost//'
 
 # Add extra paths to LD_LIBRARY_PATH for the worker
