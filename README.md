@@ -2,6 +2,7 @@ StartCeleryWorker
 =================
 
 A plugin to start celery workers on every node of a StarCluster cluster.
+To install, add a symlink to `celery_worker.py` in `~/.starcluster/plugins/`.
 
 ### Typical configuration:
 Add this to your `~/.starcluster/config` file:
