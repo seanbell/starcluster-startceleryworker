@@ -61,21 +61,21 @@ celery_cmd = ../venv/bin/celery
 remount_dir = /home
 
 # use a different broker than the one specified in your config
-broker='amqp://guest@localhost//'
+broker = 'amqp://guest@localhost//'
 
 # Add extra paths to LD_LIBRARY_PATH for the worker
-ld_library_paths=['/usr/local/lib']
+ld_library_paths = ['/usr/local/lib']
 
 # Use a different heartbeat (in seconds)
-heartbeat_interval=5
+heartbeat_interval = 5
 
 # Restart the workers after a different number of tasks (change to be higher if
 # you have lots of little tasks)
-maxtasksperchild=1
+maxtasksperchild = 1
 
 # Whether to include -Ofair (I find that it helps increase worker utilization).
-Ofair=True
+Ofair = True
 
 # Different log level
-loglevel=info
+loglevel = info
 </pre>
