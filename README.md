@@ -54,7 +54,7 @@ Include these under `[plugin start_gpu_celery_worker]`:
 <pre>
 # use a different command to start celery, such as with a venv (with respect to
 # the path worker_dir)
-celery_cmd='../venv/bin/celery'
+celery_cmd = ../venv/bin/celery
 
 # remount the base directory of the NFS filesystem, to be remounted before
 # any code is run (this helps ensure it is up to date)
@@ -77,5 +77,5 @@ maxtasksperchild=1
 Ofair=True
 
 # Different log level
-loglevel='info'
+loglevel=info
 </pre>
