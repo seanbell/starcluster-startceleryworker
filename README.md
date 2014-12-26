@@ -4,6 +4,7 @@ starcluster-plugins
 My plugins for starcluster.
 
 ### Typical usage:
+Add this to your `~/.starcluster/config` file:
 <pre>
 [plugin start_celery_worker]
 setup_class = celery_worker.StartCeleryWorker
@@ -16,7 +17,7 @@ git_sync_dir = ~/repo
 worker_dir = ~/repo/code
 
 # location of the celery package (used by the -A argument for celery)
-app = styledb
+app = my.celery.app
 
 # name of the celery queue
 queue = celery
@@ -26,7 +27,7 @@ concurrency = None
 
 [plugin kill_celery_worker]
 setup_class = celery_worker.KillCeleryWorker
-queue = styledb_gpu
+queue = celery
 </pre>
 
 Note that you can have multiple plugins with different names (e.g.
