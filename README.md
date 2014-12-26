@@ -33,6 +33,16 @@ queue = celery
 Note that you can have multiple plugins with different names (e.g.
 `[plugin start_gpu_celery_worker]`, `[plugin start_cpu_celery_worker']`).
 
+To start your workers:
+<pre>
+starcluster runplugin start_celery_worker cluster_name
+</pre>
+To stop:
+<pre>
+starcluster runplugin stop_celery_worker cluster_name
+</pre>
+
+
 ### Other options for start_celery_worker:
 Include these under `[plugin start_gpu_celery_worker]`:
 <pre>
