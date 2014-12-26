@@ -59,14 +59,14 @@ class StartCeleryWorker(WorkerSetup):
             celery_args += ['--broker', broker]
         if maxtasksperchild:
             celery_args += ['--maxtasksperchild', maxtasksperchild]
-        if Ofair:
-            celery_args += ['-Ofair']
         if concurrency:
             celery_args += ['--concurrency', concurrency]
         if loglevel:
             celery_args += ['--loglevel', loglevel]
         if heartbeat_interval:
             celery_args += ['--heartbeat-interval', heartbeat_interval]
+        if Ofair:
+            celery_args += ['-Ofair']
 
         celery_cmd = "; ".join([
             "export LD_LIBRARY_PATH=\"" + ':'.join(ld_library_paths) + ":$LD_LIBRARY_PATH\"",
