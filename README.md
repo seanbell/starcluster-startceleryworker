@@ -34,6 +34,7 @@ Note that you can have multiple plugins with different names (e.g.
 `[plugin start_gpu_celery_worker]`, `[plugin start_cpu_celery_worker']`).
 
 ### Other options for start_celery_worker:
+Include these under `[plugin start_gpu_celery_worker]`:
 <pre>
 # use a different command to start celery, such as with a venv (with respect to
 # the path worker_dir)
