@@ -3,7 +3,7 @@ starcluster-plugins
 
 My plugins for starcluster.
 
-### Typical usage:
+### Typical configuration:
 Add this to your `~/.starcluster/config` file:
 <pre>
 [plugin start_celery_worker]
@@ -33,6 +33,12 @@ queue = celery
 Note that you can have multiple plugins with different names (e.g.
 `[plugin start_gpu_celery_worker]`, `[plugin start_cpu_celery_worker']`).
 
+When you start a new cluster or add a new node, workers will automatically be
+started.  Note that if you change the configuration after starting the cluster,
+new nodes will still be added with the old configuration.  If someone knows how
+to fix this, please let me know!
+
+### Command line
 To start your workers:
 <pre>
 starcluster runplugin start_celery_worker cluster_name
