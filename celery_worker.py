@@ -84,8 +84,8 @@ class StartCeleryWorker(WorkerSetup):
         self._start_cmd = "; ".join([
             "tmux kill-session -t '%s'" % tmux_session,
             "sudo mount -o remount '%s'" % remount_dir if remount_dir else "echo no remount",
-            "tmux new-session -s '%s' -d '%s' \; set-option -t '%s' history-limit %s" % (
-                tmux_session, celery_cmd, tmux_session, tmux_history_limit),
+            "tmux new-session -s '%s' -d '%s'" % (tmux_session, celery_cmd),
+            "tmux set-option -t '%s' history-limit %s" % (tmux_session, tmux_history_limit),
         ])
 
     def on_add_node(self, node, nodes, master, user, user_shell, volumes):
