@@ -62,9 +62,17 @@ starcluster runplugin kill_celery_worker cluster_name
 </pre>
 
 **View the log on a worker:**
+
 Simply capture the tmux pane:
 <pre>
 starcluster sshnode -u ubuntu cluster_name node001 "tmux capture-pane -p -s '-1000' -t celery-queue"
+</pre>
+(replace `queue` with your queue name)
+
+Or log in and attach to the pane:
+<pre>
+starcluster sshnode -u ubuntu cluster_name node001
+tmux capture-pane -p -s '-1000' -t celery-queue
 </pre>
 
 
