@@ -66,14 +66,14 @@ starcluster runplugin kill_celery_worker cluster_name
 
 Print a capture of the tmux pane:
 <pre>
-starcluster sshnode -u ubuntu cluster_name node001 "tmux capture-pane -p -s '-1000' -t celery-queue"
+starcluster sshnode -u ubuntu cluster_name node001 "tmux capture-pane -p -S '-100' -t celery-queue"
 </pre>
-(replace `queue` with your queue name)
+Replace `queue` with your queue name.  `-S '-100'` gives an extra 100 lines of history.
 
 Or log in and attach to the pane:
 <pre>
 starcluster sshnode -u ubuntu cluster_name node001
-tmux capture-pane -p -s '-1000' -t celery-queue
+tmux capture-pane -p -S '-1000' -t celery-queue
 </pre>
 
 
