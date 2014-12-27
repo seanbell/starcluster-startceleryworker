@@ -33,7 +33,7 @@ class StartCeleryWorker(WorkerSetup):
             concurrency=None,
             app=None,
             broker=None,
-            ld_library_paths=['/usr/local/lib'],
+            ld_library_path='/usr/local/lib',
             heartbeat_interval=5,
             maxtasksperchild=1,
             Ofair=True,
@@ -69,7 +69,7 @@ class StartCeleryWorker(WorkerSetup):
             celery_args += ['-Ofair']
 
         celery_cmd = "; ".join([
-            "export LD_LIBRARY_PATH=\"" + ':'.join(ld_library_paths) + ":$LD_LIBRARY_PATH\"",
+            "export LD_LIBRARY_PATH=\"" + ld_library_path + ":$LD_LIBRARY_PATH\"",
             "cd \"%s\"" % worker_dir,
             ' '.join(celery_args),
         ])

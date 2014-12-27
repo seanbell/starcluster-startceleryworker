@@ -69,7 +69,7 @@ remount_dir = /home
 broker = 'amqp://guest@localhost//'
 
 # Add extra paths to LD_LIBRARY_PATH for the worker
-ld_library_paths = ['/usr/local/lib']
+ld_library_paths = /usr/local/lib:/some/other/path
 
 # Use a different heartbeat (in seconds)
 heartbeat_interval = 5
