@@ -44,14 +44,14 @@ new nodes will still be added with the old configuration.  If someone knows how
 to fix this, please let me know!
 
 ### Command line
-**To (re)start your workers:**
+**Start/restart your workers:**
 <pre>
 starcluster runplugin start_celery_worker cluster_name
 </pre>
 If the workers are already started, running start again will re-sync the code,
 kill them, and then start them again.
 
-**To kill your workers:**
+**Kill your workers:**
 <pre>
 starcluster runplugin kill_celery_worker cluster_name
 </pre>
