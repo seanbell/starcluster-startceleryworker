@@ -61,12 +61,11 @@ kill them, and then start them again.
 starcluster runplugin kill_celery_worker cluster_name
 </pre>
 
-**View the log on a worker:
+**View the log on a worker:**
+Simply capture the tmux pane:
 <pre>
-starcluster sshnode -u ubuntu cluster_name
-tmux attach -t celery-QUEUE_NAME
+starcluster sshnode -u ubuntu cluster_name node001 "tmux capture-pane -p -s '-1000' -t celery-queue"
 </pre>
-(replace with your queue name)
 
 
 ### Other options for start_celery_worker:
@@ -99,7 +98,8 @@ Ofair = True
 # Celery log level
 loglevel = info
 
-# Run as a different user
+# Run as a different user (make sure you add this line to the KillCeleryWorker
+# plugin as well)
 user = ubuntu
 
 # Tmux buffer size (increase to store more of the recent log output)

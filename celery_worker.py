@@ -100,7 +100,7 @@ class StartCeleryWorker(WorkerSetup):
 
 class KillCeleryWorker(WorkerSetup):
 
-    def __init__(self, queue='celery'):
+    def __init__(self, user='ubuntu', queue='celery'):
         tmux_session = "celery-" + queue
         self._kill_cmd = "tmux kill-session -t '%s'" % tmux_session
 
