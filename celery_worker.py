@@ -75,7 +75,7 @@ class StartCeleryWorker(WorkerSetup):
         celery_cmd = "; ".join([
             "export LD_LIBRARY_PATH=\"" + ld_library_path + ":$LD_LIBRARY_PATH\"",
             "cd \"%s\"" % worker_dir,
-            ' '.join(celery_args),
+            ' '.join(str(x) for x in celery_args),
         ])
 
         tmux_session = "celery-" + queue
