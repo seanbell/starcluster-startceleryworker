@@ -53,7 +53,7 @@ kill them, and then start them again.
 
 **To stop:**
 <pre>
-starcluster runplugin stop_celery_worker cluster_name
+starcluster runplugin kill_celery_worker cluster_name
 </pre>
 
 
