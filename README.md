@@ -48,8 +48,8 @@ to fix this, please let me know!
 <pre>
 starcluster runplugin start_celery_worker cluster_name
 </pre>
-If the workers are already started, running start again will kill the workers,
-re-sync the code, and then start them again.
+If the workers are already started, running start again will re-sync the code,
+kill them, and then start them again.
 
 **To stop:**
 <pre>
