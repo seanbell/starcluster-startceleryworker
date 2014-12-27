@@ -51,7 +51,7 @@ starcluster runplugin start_celery_worker cluster_name
 If the workers are already started, running start again will re-sync the code,
 kill them, and then start them again.
 
-**To stop:**
+**To kill your workers:**
 <pre>
 starcluster runplugin kill_celery_worker cluster_name
 </pre>
