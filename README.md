@@ -4,9 +4,9 @@ StartCeleryWorker
 A plugin to start celery workers on every node of a StarCluster cluster.
 
 Each celery worker is contained in a tmux session, so you don't need to worry
-about log files taking up too much disk space.  Each worker logs to its local
-tmux session.  Using tmux sessions makes it easier to reliably kill celery
-workers.  The tmux session is named `"celery-" + queue`.
+about log files taking up too much disk space.  Each worker logs to the screen
+on its local tmux session.  Using tmux sessions makes it easier to reliably
+kill celery workers.  The tmux session is named `"celery-" + queue`.
 
 ### Installation
 1. Check out this repository.
