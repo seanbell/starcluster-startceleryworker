@@ -24,7 +24,7 @@ worker_dir = ~/repo/code
 # Python package containing the celery app (used by the -A argument for celery)
 app = my.celery.app
 
-# Name of the celery queue (celery is the default queue name)
+# Name of the celery queue (default: celery)
 queue = celery
 
 # Number of worker processes to run (None to use all processes)
