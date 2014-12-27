@@ -89,7 +89,7 @@ celery_cmd = ../venv/bin/celery
 remount_dir = /home
 
 # Use a different broker than the one specified in your config
-broker = 'amqp://guest@localhost//'
+broker = amqp://guest@localhost//
 
 # Add extra paths to LD_LIBRARY_PATH for the worker
 ld_library_paths = /usr/local/lib:/some/other/path

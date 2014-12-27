@@ -56,11 +56,13 @@ class StartCeleryWorker(WorkerSetup):
             self._sync_cmd = None
 
         celery_args = [celery_cmd]
-        celery_args += ['--hostname', '%h-' + queue]
+        celery_args += ['--hostname', '"%%h-%s"' % queue]
+        if queue:
+            celery_args += ['-Q', queue]
         if app:
             celery_args += ['--app', app]
         if broker:
-            celery_args += ['--broker', broker]
+            celery_args += ['--broker', '"%s"' % broker]
         if maxtasksperchild:
             celery_args += ['--maxtasksperchild', maxtasksperchild]
         if concurrency:
