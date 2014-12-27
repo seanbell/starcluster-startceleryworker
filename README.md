@@ -73,7 +73,7 @@ Replace `queue` with your queue name.  The argument `-S '-100'` gives an extra 1
 Or log in and attach to the pane:
 <pre>
 starcluster sshnode -u ubuntu cluster_name node001
-tmux capture-pane -p -S '-1000' -t celery-queue
+tmux attach -t celery-queue
 </pre>
 
 
