@@ -68,7 +68,7 @@ Print a capture of the tmux pane:
 <pre>
 starcluster sshnode -u ubuntu cluster_name node001 "tmux capture-pane -p -S '-100' -t celery-queue"
 </pre>
-Replace `queue` with your queue name.  `-S '-100'` gives an extra 100 lines of history.
+Replace `queue` with your queue name.  The argument `-S '-100'` gives an extra 100 lines of history.
 
 Or log in and attach to the pane:
 <pre>
