@@ -55,8 +55,10 @@ class StartCeleryWorker(WorkerSetup):
         else:
             self._sync_cmd = None
 
-        celery_args = [celery_cmd]
-        celery_args += ['--hostname', '"%%h-%s"' % queue]
+        celery_args = [
+            celery_cmd, 'worker',
+            '--hostname', '"%%h-%s"' % queue,
+        ]
         if queue:
             celery_args += ['-Q', queue]
         if app:
@@ -76,7 +78,7 @@ class StartCeleryWorker(WorkerSetup):
 
         celery_cmd = "; ".join([
             "export LD_LIBRARY_PATH=\"" + ld_library_path + ":$LD_LIBRARY_PATH\"",
-            "cd \"%s\"" % worker_dir,
+            "cd %s" % worker_dir,
             ' '.join(str(x) for x in celery_args),
         ])
 
