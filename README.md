@@ -27,7 +27,7 @@ app = my.celery.app
 # Name of the celery queue (default: celery)
 queue = celery
 
-# Number of worker processes to run (None to use all processes, default: None)
+# Number of worker processes to run (None to use all processes)
 concurrency = None
 
 [plugin kill_celery_worker]
