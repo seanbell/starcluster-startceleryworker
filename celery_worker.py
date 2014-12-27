@@ -3,7 +3,7 @@ from starcluster.logger import log
 from starcluster import threadpool
 
 
-def run_cmd(node, cmd, user='ubuntu', silent=True):
+def run_cmd(node, cmd, user, silent=True):
     log.info("%s@%s: %s" % (user, node.alias, cmd))
     if user != 'root':
         node.ssh.switch_user(user)
@@ -38,7 +38,11 @@ class StartCeleryWorker(WorkerSetup):
             maxtasksperchild=1,
             Ofair=True,
             loglevel='info',
+            user='ubuntu',
+            tmux_history_limit=8000,
     ):
+
+        self._user = user
 
         if git_sync_dir:
             self._sync_cmd = "; ".join([
@@ -78,18 +82,19 @@ class StartCeleryWorker(WorkerSetup):
         self._start_cmd = "; ".join([
             "tmux kill-session -t '%s'" % tmux_session,
             "sudo mount -o remount '%s'" % remount_dir if remount_dir else "echo no remount",
-            "tmux new-session -s '%s' -d '%s'" % (tmux_session, celery_cmd),
+            "tmux set-option -g history-limit %s \; new-session -s '%s' -d '%s'" % (
+                tmux_history_limit, tmux_session, celery_cmd),
         ])
 
     def on_add_node(self, node, nodes, master, user, user_shell, volumes):
-        run_cmd(node, self._start_cmd)
+        run_cmd(node, self._start_cmd, self._user)
 
     def run(self, nodes, master, user, user_shell, volumes):
         if self._sync_cmd:
-            run_cmd(master, self._sync_cmd, silent=False)
+            run_cmd(master, self._sync_cmd, self._user, silent=False)
         for node in nodes:
             self.pool.simple_job(
-                run_cmd, args=(node, self._start_cmd), jobid=node.alias)
+                run_cmd, args=(node, self._start_cmd, self._user), jobid=node.alias)
         self.pool.wait(len(nodes))
 
 
@@ -102,5 +107,8 @@ class KillCeleryWorker(WorkerSetup):
     def run(self, nodes, master, user, user_shell, volumes):
         for node in nodes:
             self.pool.simple_job(
-                run_cmd, args=(node, self._kill_cmd), jobid=node.alias)
+                run_cmd,
+                args=(node, self._kill_cmd, self._user),
+                jobid=node.alias,
+            )
         self.pool.wait(len(nodes))

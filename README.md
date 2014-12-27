@@ -61,6 +61,13 @@ kill them, and then start them again.
 starcluster runplugin kill_celery_worker cluster_name
 </pre>
 
+**View the log on a worker:
+<pre>
+starcluster sshnode -u ubuntu cluster_name
+tmux attach -t celery-QUEUE_NAME
+</pre>
+(replace with your queue name)
+
 
 ### Other options for start_celery_worker:
 Include these under `[plugin start_gpu_celery_worker]`:
@@ -89,6 +96,12 @@ maxtasksperchild = 1
 # Whether to include -Ofair (I find that it helps increase worker utilization).
 Ofair = True
 
-# Different log level
+# Celery log level
 loglevel = info
+
+# Run as a different user
+user = ubuntu
+
+# Tmux buffer size (increase to store more of the recent log output)
+tmux_history_limit = 10000
 </pre>
