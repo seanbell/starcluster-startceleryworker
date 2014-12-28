@@ -117,8 +117,9 @@ def qd(s):
     if s is not None:
         s = str(s).strip()
         if s.startswith('~/'):
-            s = "$HOME/" + s[2:]
-        return '"%s"' % s
+            return '"$HOME/%s"' % s[2:]
+        else:
+            return '"%s"' % s
     else:
         return ''
 
