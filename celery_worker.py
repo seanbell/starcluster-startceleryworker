@@ -39,8 +39,8 @@ class StartCeleryWorker(WorkerSetup):
 
         if git_sync_dir:
             self._sync_cmd = "; ".join([
-                "sudo mount -o remount %s" % q(remount_dir) if remount_dir else "echo no remount",
-                "cd %s" % q(git_sync_dir),
+                "sudo mount -o remount %s" % qdir(remount_dir) if remount_dir else "echo no remount",
+                "cd %s" % qdir(git_sync_dir),
                 "git pull",
                 "git submodule init",
                 "git submodule update",
@@ -72,14 +72,14 @@ class StartCeleryWorker(WorkerSetup):
         celery_cmd = "; ".join([
             # (use double quotes so that bash expands $LD_LIBRARY_PATH)
             'export LD_LIBRARY_PATH="' + ld_library_path + ':$LD_LIBRARY_PATH"',
-            'cd %s' % q(worker_dir),
+            'cd %s' % qdir(worker_dir),
             ' '.join(x for x in celery_args),
         ])
 
         tmux_session = "celery-" + queue
         self._start_cmd = "; ".join([
             "tmux kill-session -t %s" % q(tmux_session),
-            "sudo mount -o remount %s" % q(remount_dir) if remount_dir else "echo no remount",
+            "sudo mount -o remount %s" % qdir(remount_dir) if remount_dir else "echo no remount",
             "tmux new-session -s %s -d %s" % (q(tmux_session), q(celery_cmd)),
             "tmux set-option -t %s history-limit %s" % (q(tmux_session), q(tmux_history_limit)),
         ])
@@ -110,6 +110,11 @@ class KillCeleryWorker(WorkerSetup):
                 jobid=node.alias,
             )
         self.pool.wait(len(nodes))
+
+
+def qdir(s):
+    """ Quote a directory string """
+    return '"%s"' % s
 
 
 def q(s):
