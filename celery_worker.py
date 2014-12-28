@@ -49,8 +49,8 @@ class StartCeleryWorker(WorkerSetup):
             self._sync_cmd = None
 
         celery_args = [
-            celery_cmd, 'worker',
-            '--hostname', '"%%h-%s"' % queue,
+            q(celery_cmd), 'worker',
+            '--hostname', q('%%h-%s' % queue),
         ]
         if queue:
             celery_args += ['-Q', q(queue)]
@@ -72,7 +72,7 @@ class StartCeleryWorker(WorkerSetup):
         celery_cmd = "; ".join([
             'export LD_LIBRARY_PATH="' + ld_library_path + ':$LD_LIBRARY_PATH"',
             'cd %s' % q(worker_dir),
-            ' '.join(str(x) for x in celery_args),
+            ' '.join(x for x in celery_args),
         ])
 
         tmux_session = "celery-" + queue
@@ -114,7 +114,7 @@ class KillCeleryWorker(WorkerSetup):
 def q(s):
     """ Strip and quote-escape a string """
     if s:
-        return pipes.quote(s.strip())
+        return pipes.quote(str(s).strip())
     else:
         return ''
 
