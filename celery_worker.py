@@ -118,7 +118,7 @@ def qd(s):
         s = str(s).strip()
         if s == "~":
             return '"$HOME"'
-        elif s.startswith('~/'):
+        elif s.startswith('~/') and '"' not in s:
             return '"$HOME/%s"' % s[2:]
     return qs(s)
 
@@ -126,7 +126,7 @@ def qd(s):
 def qs(s):
     """ Strip and quote-escape a string """
     if s is not None:
-        return pipes.quote()
+        return pipes.quote(s)
     else:
         return ''
 
