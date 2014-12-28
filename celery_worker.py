@@ -115,7 +115,10 @@ class KillCeleryWorker(WorkerSetup):
 def qd(s):
     """ Quote a directory string with double-quotes to allow $variables """
     if s is not None:
-        return '"%s"' % str(s).strip()
+        s = str(s).strip()
+        if s.startswith('~'):
+            s = "$HOME" + s[1:]
+        return '"%s"' % s
     else:
         return ''
 
