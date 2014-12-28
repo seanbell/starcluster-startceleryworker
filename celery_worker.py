@@ -39,8 +39,8 @@ class StartCeleryWorker(WorkerSetup):
 
         if git_sync_dir:
             self._sync_cmd = "; ".join([
-                "sudo mount -o remount %s" % qdir(remount_dir) if remount_dir else "echo no remount",
-                "cd %s" % qdir(git_sync_dir),
+                "sudo mount -o remount %s" % qd(remount_dir) if remount_dir else "echo no remount",
+                "cd %s" % qd(git_sync_dir),
                 "git pull",
                 "git submodule init",
                 "git submodule update",
@@ -49,39 +49,39 @@ class StartCeleryWorker(WorkerSetup):
             self._sync_cmd = None
 
         celery_args = [
-            q(celery_cmd), 'worker',
-            '--hostname', q('%%h-%s' % queue),
+            qs(celery_cmd), 'worker',
+            '--hostname', qs('%%h-%s' % queue),
         ]
         if queue:
-            celery_args += ['-Q', q(queue)]
+            celery_args += ['-Q', qs(queue)]
         if app:
-            celery_args += ['--app', q(app)]
+            celery_args += ['--app', qs(app)]
         if broker:
-            celery_args += ['--broker', q(broker)]
+            celery_args += ['--broker', qs(broker)]
         if maxtasksperchild:
-            celery_args += ['--maxtasksperchild', q(maxtasksperchild)]
+            celery_args += ['--maxtasksperchild', qs(maxtasksperchild)]
         if concurrency:
-            celery_args += ['--concurrency', q(concurrency)]
+            celery_args += ['--concurrency', qs(concurrency)]
         if loglevel:
-            celery_args += ['--loglevel', q(loglevel)]
+            celery_args += ['--loglevel', qs(loglevel)]
         if heartbeat_interval:
-            celery_args += ['--heartbeat-interval', q(heartbeat_interval)]
+            celery_args += ['--heartbeat-interval', qs(heartbeat_interval)]
         if Ofair:
             celery_args += ['-Ofair']
 
         celery_cmd = "; ".join([
             # (use double quotes so that bash expands $LD_LIBRARY_PATH)
             'export LD_LIBRARY_PATH="' + ld_library_path + ':$LD_LIBRARY_PATH"',
-            'cd %s' % qdir(worker_dir),
+            'cd %s' % qd(worker_dir),
             ' '.join(x for x in celery_args),
         ])
 
         tmux_session = "celery-" + queue
         self._start_cmd = "; ".join([
-            "tmux kill-session -t %s" % q(tmux_session),
-            "sudo mount -o remount %s" % qdir(remount_dir) if remount_dir else "echo no remount",
-            "tmux new-session -s %s -d %s" % (q(tmux_session), q(celery_cmd)),
-            "tmux set-option -t %s history-limit %s" % (q(tmux_session), q(tmux_history_limit)),
+            "tmux kill-session -t %s" % qs(tmux_session),
+            "sudo mount -o remount %s" % qd(remount_dir) if remount_dir else "echo no remount",
+            "tmux new-session -s %s -d %s" % (qs(tmux_session), qs(celery_cmd)),
+            "tmux set-option -t %s history-limit %s" % (qs(tmux_session), qs(tmux_history_limit)),
         ])
 
     def on_add_node(self, node, nodes, master, user, user_shell, volumes):
@@ -112,12 +112,15 @@ class KillCeleryWorker(WorkerSetup):
         self.pool.wait(len(nodes))
 
 
-def qdir(s):
-    """ Quote a directory string """
-    return '"%s"' % s
+def qd(s):
+    """ Quote a directory string with double-quotes to allow $variables """
+    if s is not None:
+        return '"%s"' % str(s).strip()
+    else:
+        return ''
 
 
-def q(s):
+def qs(s):
     """ Strip and quote-escape a string """
     if s is not None:
         return pipes.quote(str(s).strip())
