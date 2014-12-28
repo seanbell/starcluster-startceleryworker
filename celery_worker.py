@@ -113,21 +113,18 @@ class KillCeleryWorker(WorkerSetup):
 
 
 def qd(s):
-    """ Quote a directory string with double-quotes to allow $variables """
+    """ Quote a directory """
     if s is not None:
         s = str(s).strip()
-        if s.startswith('~/'):
-            return '"$HOME/%s"' % s[2:]
-        else:
-            return '"%s"' % s
-    else:
-        return ''
+        if s.startswith('~'):
+            return '"$HOME%s"' % s[1:]
+    return qs(s)
 
 
 def qs(s):
     """ Strip and quote-escape a string """
     if s is not None:
-        return pipes.quote(str(s).strip())
+        return pipes.quote()
     else:
         return ''
 
