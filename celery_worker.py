@@ -1,7 +1,8 @@
 import pipes
+
+from starcluster import threadpool
 from starcluster.clustersetup import ClusterSetup
 from starcluster.logger import log
-from starcluster import threadpool
 
 
 class WorkerSetup(ClusterSetup):
