@@ -113,7 +113,7 @@ class KillCeleryWorker(WorkerSetup):
 
 def q(s):
     """ Strip and quote-escape a string """
-    if s:
+    if s is not None:
         return pipes.quote(str(s).strip())
     else:
         return ''
