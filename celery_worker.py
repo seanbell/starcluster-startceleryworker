@@ -116,8 +116,8 @@ def qd(s):
     """ Quote a directory string with double-quotes to allow $variables """
     if s is not None:
         s = str(s).strip()
-        if s.startswith('~'):
-            s = "$HOME" + s[1:]
+        if s.startswith('~/'):
+            s = "$HOME/" + s[2:]
         return '"%s"' % s
     else:
         return ''
