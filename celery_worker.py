@@ -118,7 +118,7 @@ def qd(s):
         s = str(s).strip()
         if s == "~":
             return '"$HOME"'
-        if s.startswith('~/'):
+        elif s.startswith('~/'):
             return '"$HOME/%s"' % s[2:]
     return qs(s)
 
