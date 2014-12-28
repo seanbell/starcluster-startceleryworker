@@ -1,16 +1,7 @@
-from pipes import quote as q
+import pipes
 from starcluster.clustersetup import ClusterSetup
 from starcluster.logger import log
 from starcluster import threadpool
-
-
-def run_cmd(node, cmd, user, silent=True):
-    log.info("%s@%s: %s" % (user, node.alias, cmd))
-    if user != 'root':
-        node.ssh.switch_user(user)
-    node.ssh.execute(cmd, silent=silent)
-    if user != 'root':
-        node.ssh.switch_user('root')
 
 
 class WorkerSetup(ClusterSetup):
@@ -67,13 +58,13 @@ class StartCeleryWorker(WorkerSetup):
         if broker:
             celery_args += ['--broker', q(broker)]
         if maxtasksperchild:
-            celery_args += ['--maxtasksperchild', int(maxtasksperchild)]
+            celery_args += ['--maxtasksperchild', q(maxtasksperchild)]
         if concurrency:
-            celery_args += ['--concurrency', int(concurrency)]
+            celery_args += ['--concurrency', q(concurrency)]
         if loglevel:
             celery_args += ['--loglevel', q(loglevel)]
         if heartbeat_interval:
-            celery_args += ['--heartbeat-interval', int(heartbeat_interval)]
+            celery_args += ['--heartbeat-interval', q(heartbeat_interval)]
         if Ofair:
             celery_args += ['-Ofair']
 
@@ -88,7 +79,7 @@ class StartCeleryWorker(WorkerSetup):
             "tmux kill-session -t %s" % q(tmux_session),
             "sudo mount -o remount %s" % q(remount_dir) if remount_dir else "echo no remount",
             "tmux new-session -s %s -d %s" % (q(tmux_session), q(celery_cmd)),
-            "tmux set-option -t %s history-limit %s" % (q(tmux_session), tmux_history_limit),
+            "tmux set-option -t %s history-limit %s" % (q(tmux_session), q(tmux_history_limit)),
         ])
 
     def on_add_node(self, node, nodes, master, user, user_shell, volumes):
@@ -117,3 +108,20 @@ class KillCeleryWorker(WorkerSetup):
                 jobid=node.alias,
             )
         self.pool.wait(len(nodes))
+
+
+def q(s):
+    """ Strip and quote-escape a string """
+    if s:
+        return pipes.quote(s.strip())
+    else:
+        return ''
+
+
+def run_cmd(node, cmd, user, silent=True):
+    log.info("%s@%s: %s" % (user, node.alias, cmd))
+    if user != 'root':
+        node.ssh.switch_user(user)
+    node.ssh.execute(cmd, silent=silent)
+    if user != 'root':
+        node.ssh.switch_user('root')
