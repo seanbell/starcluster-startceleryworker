@@ -116,8 +116,10 @@ def qd(s):
     """ Quote a directory """
     if s is not None:
         s = str(s).strip()
-        if s.startswith('~'):
-            return '"$HOME%s"' % s[1:]
+        if s == "~":
+            return '"$HOME"'
+        if s.startswith('~/'):
+            return '"$HOME/%s"' % s[2:]
     return qs(s)
 
 
