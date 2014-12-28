@@ -33,6 +33,7 @@ class StartCeleryWorker(WorkerSetup):
             loglevel='info',
             user='ubuntu',
             tmux_history_limit=8000,
+            setup_cmd=None,
     ):
 
         self._user = user
@@ -69,18 +70,24 @@ class StartCeleryWorker(WorkerSetup):
         if Ofair:
             celery_args += ['-Ofair']
 
-        celery_cmd = "; ".join([
+        # session_cmd: command that runs inside the tmux session
+        session_cmd_list = [
             # (use double quotes so that bash expands $LD_LIBRARY_PATH)
-            'export LD_LIBRARY_PATH="' + ld_library_path + ':$LD_LIBRARY_PATH"',
+            'export LD_LIBRARY_PATH="' + ld_library_path + ':$LD_LIBRARY_PATH"'
+        ]
+        if setup_cmd:
+            session_cmd_list += [setup_cmd]
+        session_cmd_list += [
             'cd %s' % qd(worker_dir),
-            ' '.join(x for x in celery_args),
-        ])
+            ' '.join(x for x in celery_args)
+        ]
+        session_cmd = "; ".join(session_cmd_list)
 
         tmux_session = "celery-" + queue
         self._start_cmd = "; ".join([
             "tmux kill-session -t %s" % qs(tmux_session),
             "sudo mount -o remount %s" % qd(remount_dir) if remount_dir else "echo no remount",
-            "tmux new-session -s %s -d %s" % (qs(tmux_session), qs(celery_cmd)),
+            "tmux new-session -s %s -d %s" % (qs(tmux_session), qs(session_cmd)),
             "tmux set-option -t %s history-limit %s" % (qs(tmux_session), qs(tmux_history_limit)),
         ])
 
