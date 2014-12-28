@@ -70,6 +70,7 @@ class StartCeleryWorker(WorkerSetup):
             celery_args += ['-Ofair']
 
         celery_cmd = "; ".join([
+            # (use double quotes so that bash expands $LD_LIBRARY_PATH)
             'export LD_LIBRARY_PATH="' + ld_library_path + ':$LD_LIBRARY_PATH"',
             'cd %s' % q(worker_dir),
             ' '.join(x for x in celery_args),
