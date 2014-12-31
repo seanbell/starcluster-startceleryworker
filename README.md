@@ -80,8 +80,13 @@ tmux attach -t celery-queue
 ### Other options for start_celery_worker:
 Include these under `[plugin start_gpu_celery_worker]`:
 <pre>
-# Run a command (inside the tmux session) before the celery worker starts
-setup_cmd = cd /mnt/ubuntu; f=file.npy; wget http://example.com/$f -O $f
+# Run a command (inside each worker tmux session) before the celery worker starts
+# (e.g. to download a data file to local instance storage inside /mnt/ubuntu)
+worker_setup_cmd = cd /mnt/ubuntu; f=file.npy; wget http://example.com/$f -O $f
+
+# Run a command on the master once at the beginning
+# (e.g. to pull and compile code)
+master_setup_cmd = cd ~/caffe; git pull origin dev; make clean; make all; make pycaffe
 
 # Use a different command to start celery, such as with a venv (with respect to
 # the path worker_dir)

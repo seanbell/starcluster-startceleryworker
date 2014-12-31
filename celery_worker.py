@@ -33,22 +33,28 @@ class StartCeleryWorker(WorkerSetup):
             loglevel='info',
             user='ubuntu',
             tmux_history_limit=8000,
-            setup_cmd=None,
+            worker_setup_cmd=None,
+            master_setup_cmd=None,
     ):
 
         self._user = user
 
+        # build master sync command
+        sync_cmd_list = []
         if git_sync_dir:
-            self._sync_cmd = "; ".join([
+            sync_cmd_list += [
                 "sudo mount -o remount %s" % qd(remount_dir) if remount_dir else "echo no remount",
                 "cd %s" % qd(git_sync_dir),
                 "git pull",
                 "git submodule init",
                 "git submodule update",
-            ])
-        else:
-            self._sync_cmd = None
+            ]
+        if master_setup_cmd:
+            sync_cmd_list += [master_setup_cmd]
+        if sync_cmd_list:
+            self._sync_cmd = "; ".join(sync_cmd_list)
 
+        # build worker node command
         celery_args = [
             qs(celery_cmd), 'worker',
             '--hostname', qs('%%h-%s' % queue),
@@ -75,8 +81,8 @@ class StartCeleryWorker(WorkerSetup):
             # (use double quotes so that bash expands $LD_LIBRARY_PATH)
             'export LD_LIBRARY_PATH="' + ld_library_path + ':$LD_LIBRARY_PATH"'
         ]
-        if setup_cmd:
-            session_cmd_list += [setup_cmd]
+        if worker_setup_cmd:
+            session_cmd_list += [worker_setup_cmd]
         session_cmd_list += [
             'cd %s' % qd(worker_dir),
             ' '.join(x for x in celery_args)
