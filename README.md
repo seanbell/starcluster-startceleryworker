@@ -30,7 +30,8 @@ worker_dir = ~/repo/code
 # Python package containing the celery app (used by the -A argument for celery)
 app = my.celery.app
 
-# Name of the celery queue (default: celery)
+# Name of the celery queue (default: celery).  You can specify multiple queues
+# as a comma-separated list (e.g. queue = video,image).
 queue = celery
 
 # Number of worker processes to run (None to use all processes)

@@ -62,7 +62,7 @@ class StartCeleryWorker(WorkerSetup):
             '--hostname', qs('%%h-%s' % queue),
         ]
         if queue:
-            celery_args += ['-Q', qs(queue)]
+            celery_args += ['--queues', qs(queue)]
         if app:
             celery_args += ['--app', qs(app)]
         if broker:
