@@ -61,20 +61,20 @@ class StartCeleryWorker(WorkerSetup):
             qs(celery_cmd), 'worker',
             '--hostname', qs('%%h-%s' % queue),
         ]
-        if queue:
-            celery_args += ['--queues', qs(queue)]
         if app:
             celery_args += ['--app', qs(app)]
+        if queue:
+            celery_args += ['--queues', qs(queue)]
         if broker:
             celery_args += ['--broker', qs(broker)]
-        if maxtasksperchild:
-            celery_args += ['--maxtasksperchild', qs(maxtasksperchild)]
         if concurrency:
             celery_args += ['--concurrency', qs(concurrency)]
-        if loglevel:
-            celery_args += ['--loglevel', qs(loglevel)]
+        if maxtasksperchild:
+            celery_args += ['--maxtasksperchild', qs(maxtasksperchild)]
         if heartbeat_interval:
             celery_args += ['--heartbeat-interval', qs(heartbeat_interval)]
+        if loglevel:
+            celery_args += ['--loglevel', qs(loglevel)]
         if Ofair:
             celery_args += ['-Ofair']
 
