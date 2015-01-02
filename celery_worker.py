@@ -20,6 +20,7 @@ class StartCeleryWorker(WorkerSetup):
             self,
             git_sync_dir,
             worker_dir,
+            kill_existing=True,
             remount_dir=None,
             queue='celery',
             celery_cmd='celery',
@@ -42,8 +43,9 @@ class StartCeleryWorker(WorkerSetup):
         # build master sync command
         sync_cmd_list = []
         if git_sync_dir:
+            if remount_dir:
+                sync_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
             sync_cmd_list += [
-                "sudo mount -o remount %s" % qd(remount_dir) if remount_dir else "echo no remount",
                 "cd %s" % qd(git_sync_dir),
                 "git pull",
                 "git submodule init",
@@ -85,17 +87,24 @@ class StartCeleryWorker(WorkerSetup):
             session_cmd_list += [worker_setup_cmd]
         session_cmd_list += [
             'cd %s' % qd(worker_dir),
-            ' '.join(x for x in celery_args)
+            ' '.join(x for x in celery_args),
         ]
+        # wait if there is an error
+        session_cmd_list += ['read']
         session_cmd = "; ".join(session_cmd_list)
 
+        # build final start command
         tmux_session = "celery-" + queue
-        self._start_cmd = "; ".join([
-            "tmux kill-session -t %s" % qs(tmux_session),
-            "sudo mount -o remount %s" % qd(remount_dir) if remount_dir else "echo no remount",
+        start_cmd_list = []
+        if kill_existing:
+            start_cmd_list += ["tmux kill-session -t %s" % qs(tmux_session)]
+        if remount_dir and kill_existing:
+            start_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
+        start_cmd_list += [
             "tmux new-session -s %s -d %s" % (qs(tmux_session), qs(session_cmd)),
             "tmux set-option -t %s history-limit %s" % (qs(tmux_session), qs(tmux_history_limit)),
-        ])
+        ]
+        self._start_cmd = "; ".join(start_cmd_list)
 
     def on_add_node(self, node, nodes, master, user, user_shell, volumes):
         run_cmd(node, self._start_cmd, self._user)

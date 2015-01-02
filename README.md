@@ -20,7 +20,8 @@ Add this to your `~/.starcluster/config` file:
 setup_class = celery_worker.StartCeleryWorker
 
 # The base of the git code repository that the workers use.  The repo and all
-# submodules will be updated.
+# submodules will be updated via "git pull; git submodule init; git submodule
+# update".
 git_sync_dir = ~/repo
 
 # Directory where the celery worker will run
@@ -34,6 +35,10 @@ queue = celery
 
 # Number of worker processes to run (None to use all processes)
 concurrency = None
+
+# If True, kill existing workers before starting.  If set to False, existing workers
+# will continue running and duplicate start commands will have no effect.
+kill_existing = True
 
 [plugin kill_celery_worker]
 setup_class = celery_worker.KillCeleryWorker
@@ -93,7 +98,8 @@ master_setup_cmd = cd ~/caffe; git pull origin dev; make clean; make all; make p
 celery_cmd = ../venv/bin/celery
 
 # Remount the base directory of the NFS filesystem, to be remounted before
-# any code is run (this helps ensure it is up to date)
+# any code is run (this helps ensure it is up to date).
+# NOTE: This is ignored if kill_existing = False.
 remount_dir = /home
 
 # Use a different broker than the one specified in your config
