@@ -100,7 +100,7 @@ celery_cmd = ../venv/bin/celery
 
 # Remount the base directory of the NFS filesystem, to be remounted before
 # any code is run (this helps ensure it is up to date).
-# NOTE: This is ignored if kill_existing = False.
+# NOTE: This is ignored if kill_existing is not True.
 remount_dir = /home
 
 # Use a different broker than the one specified in your config
