@@ -34,8 +34,8 @@ app = my.celery.app
 # as a comma-separated list (e.g. queue = video,image).
 queue = celery
 
-# Number of worker processes to run (None to use all processes)
-concurrency = None
+# Number of worker processes to run (leave blank or omit to use all processes)
+concurrency =
 
 # If True, kill existing workers before starting.  If set to False, existing workers
 # will continue running and duplicate start commands will have no effect.

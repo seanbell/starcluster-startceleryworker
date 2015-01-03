@@ -47,7 +47,7 @@ class StartCeleryWorker(WorkerSetup):
         # build master sync command
         sync_cmd_list = []
         if git_sync_dir:
-            if remount_dir and remount_dir.strip() != 'None':
+            if remount_dir.strip():
                 sync_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
             sync_cmd_list += [
                 "cd %s" % qd(git_sync_dir),
@@ -66,17 +66,17 @@ class StartCeleryWorker(WorkerSetup):
             '--hostname', qs('%%h-%s' % queue),
             '--queues', qs(queue),
         ]
-        if app and app.strip() != 'None':
+        if app.strip():
             celery_args += ['--app', qs(app)]
-        if broker and broker.strip() != 'None':
+        if broker.strip():
             celery_args += ['--broker', qs(broker)]
-        if concurrency and concurrency.strip() != 'None':
+        if concurrency.strip():
             celery_args += ['--concurrency', int(concurrency)]
-        if maxtasksperchild and maxtasksperchild.strip() != 'None':
+        if maxtasksperchild.strip():
             celery_args += ['--maxtasksperchild', int(maxtasksperchild)]
-        if heartbeat_interval and heartbeat_interval.strip() != 'None':
-            celery_args += ['--heartbeat-interval', qs(heartbeat_interval)]
-        if loglevel and loglevel.strip() != 'None':
+        if heartbeat_interval.strip():
+            celery_args += ['--heartbeat-interval', int(heartbeat_interval)]
+        if loglevel.strip():
             celery_args += ['--loglevel', qs(loglevel)]
         if Ofair:
             celery_args += ['-Ofair']
@@ -139,8 +139,13 @@ class KillCeleryWorker(WorkerSetup):
 
 def to_bool(s):
     if s:
-        assert s in ('True', 'False')
-        return s == 'True'
+        s = s.strip()
+        if s == 'True':
+            return True
+        elif s == 'False':
+            return False
+        else:
+            raise ValueError("Expected True or False, got: '%s'" % s)
     return False
 
 
