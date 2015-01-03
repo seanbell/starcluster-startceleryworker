@@ -101,7 +101,7 @@ class StartCeleryWorker(WorkerSetup):
         start_cmd_list = []
         if kill_existing:
             start_cmd_list += ["tmux kill-session -t %s" % qs(tmux_session)]
-        if remount_dir.strip() and remount_dir.strip() != 'None' and kill_existing:
+        if remount_dir.strip() and kill_existing:
             start_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
         start_cmd_list += [
             "tmux new-session -s %s -d %s" % (qs(tmux_session), qs(session_cmd)),
