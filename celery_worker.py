@@ -40,10 +40,14 @@ class StartCeleryWorker(WorkerSetup):
 
         self._user = user
 
+        # error checking
+        kill_existing = to_bool(kill_existing)
+        Ofair = to_bool(Ofair)
+
         # build master sync command
         sync_cmd_list = []
         if git_sync_dir:
-            if remount_dir:
+            if remount_dir and remount_dir.strip() != 'None':
                 sync_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
             sync_cmd_list += [
                 "cd %s" % qd(git_sync_dir),
@@ -75,7 +79,6 @@ class StartCeleryWorker(WorkerSetup):
         if loglevel and loglevel.strip() != 'None':
             celery_args += ['--loglevel', qs(loglevel)]
         if Ofair:
-            assert Ofair.strip() in ('True', 'False')
             celery_args += ['-Ofair']
 
         # session_cmd: command that runs inside the tmux session
@@ -98,7 +101,7 @@ class StartCeleryWorker(WorkerSetup):
         start_cmd_list = []
         if kill_existing:
             start_cmd_list += ["tmux kill-session -t %s" % qs(tmux_session)]
-        if remount_dir and kill_existing:
+        if remount_dir.strip() and remount_dir.strip() != 'None' and kill_existing:
             start_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
         start_cmd_list += [
             "tmux new-session -s %s -d %s" % (qs(tmux_session), qs(session_cmd)),
@@ -132,6 +135,13 @@ class KillCeleryWorker(WorkerSetup):
                 jobid=node.alias,
             )
         self.pool.wait(len(nodes))
+
+
+def to_bool(s):
+    if s:
+        assert s in ('True', 'False')
+        return s == 'True'
+    return False
 
 
 def qd(s):
