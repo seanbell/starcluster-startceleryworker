@@ -34,8 +34,8 @@ class StartCeleryWorker(WorkerSetup):
             loglevel='info',
             user='ubuntu',
             tmux_history_limit='8000',
-            worker_setup_cmd='None',
-            master_setup_cmd='None',
+            worker_setup_cmd='',
+            master_setup_cmd='',
     ):
 
         self._user = user
