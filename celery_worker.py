@@ -60,22 +60,22 @@ class StartCeleryWorker(WorkerSetup):
         celery_args = [
             qs(celery_cmd), 'worker',
             '--hostname', qs('%%h-%s' % queue),
+            '--queues', qs(queue),
         ]
-        if app:
+        if app and app.strip() != 'None':
             celery_args += ['--app', qs(app)]
-        if queue:
-            celery_args += ['--queues', qs(queue)]
-        if broker:
+        if broker and broker.strip() != 'None':
             celery_args += ['--broker', qs(broker)]
-        if concurrency:
-            celery_args += ['--concurrency', qs(concurrency)]
-        if maxtasksperchild:
-            celery_args += ['--maxtasksperchild', qs(maxtasksperchild)]
-        if heartbeat_interval:
+        if concurrency and concurrency.strip() != 'None':
+            celery_args += ['--concurrency', int(concurrency)]
+        if maxtasksperchild and maxtasksperchild.strip() != 'None':
+            celery_args += ['--maxtasksperchild', int(maxtasksperchild)]
+        if heartbeat_interval and heartbeat_interval.strip() != 'None':
             celery_args += ['--heartbeat-interval', qs(heartbeat_interval)]
-        if loglevel:
+        if loglevel and loglevel.strip() != 'None':
             celery_args += ['--loglevel', qs(loglevel)]
         if Ofair:
+            assert Ofair.strip() in ('True', 'False')
             celery_args += ['-Ofair']
 
         # session_cmd: command that runs inside the tmux session
