@@ -20,22 +20,22 @@ class StartCeleryWorker(WorkerSetup):
             self,
             git_sync_dir,
             worker_dir,
-            kill_existing=True,
-            remount_dir=None,
+            kill_existing='True',
+            remount_dir='',
             queue='celery',
             celery_cmd='celery',
-            concurrency=None,
-            app=None,
-            broker=None,
+            concurrency='',
+            app='',
+            broker='',
             ld_library_path='/usr/local/lib',
-            heartbeat_interval=5,
-            maxtasksperchild=1,
-            Ofair=True,
+            heartbeat_interval='5',
+            maxtasksperchild='1',
+            Ofair='True',
             loglevel='info',
             user='ubuntu',
-            tmux_history_limit=8000,
-            worker_setup_cmd=None,
-            master_setup_cmd=None,
+            tmux_history_limit='8000',
+            worker_setup_cmd='None',
+            master_setup_cmd='None',
     ):
 
         self._user = user
@@ -105,7 +105,7 @@ class StartCeleryWorker(WorkerSetup):
             start_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
         start_cmd_list += [
             "tmux new-session -s %s -d %s" % (qs(tmux_session), qs(session_cmd)),
-            "tmux set-option -t %s history-limit %s" % (qs(tmux_session), qs(tmux_history_limit)),
+            "tmux set-option -t %s history-limit %s" % (qs(tmux_session), int(tmux_history_limit)),
         ]
         self._start_cmd = "; ".join(start_cmd_list)
 
