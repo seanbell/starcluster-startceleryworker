@@ -125,6 +125,7 @@ class KillCeleryWorker(WorkerSetup):
 
     def __init__(self, user='ubuntu', queue='celery'):
         tmux_session = "celery-" + queue
+        self._user = user
         self._kill_cmd = "tmux kill-session -t '%s'" % tmux_session
 
     def run(self, nodes, master, user, user_shell, volumes):
