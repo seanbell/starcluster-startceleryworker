@@ -90,7 +90,7 @@ class StartCeleryWorker(WorkerSetup):
             session_cmd_list += [worker_setup_cmd]
         session_cmd_list += [
             'cd %s' % qd(worker_dir),
-            ' '.join(x for x in celery_args),
+            ' '.join(str(x) for x in celery_args),
         ]
         # wait if there is an error
         session_cmd_list += ['read']
