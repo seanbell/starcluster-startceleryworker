@@ -51,7 +51,7 @@ Note that you can have multiple plugins with different names (e.g.
 
 When you start a new cluster or add a new node, workers will automatically be
 started if you add the "start" version of the plugin to your `PLUGINS` list
-(you should not add the "stop" version).  Note that if you change the
+(you should not add the "kill" version).  Note that if you change the
 configuration after starting the cluster, new nodes will still be added with
 the old configuration.  If someone knows how to fix this, please let me know!
 
