@@ -21,6 +21,7 @@ class StartCeleryWorker(WorkerSetup):
             git_sync_dir,
             worker_dir,
             kill_existing='True',
+            delete_pyc_files='True',
             remount_dir='',
             queue='celery',
             celery_cmd='celery',
@@ -42,6 +43,7 @@ class StartCeleryWorker(WorkerSetup):
 
         # error checking
         kill_existing = to_bool(kill_existing)
+        delete_pyc_files = to_bool(delete_pyc_files)
         Ofair = to_bool(Ofair)
 
         # build master sync command
@@ -55,6 +57,8 @@ class StartCeleryWorker(WorkerSetup):
                 "git submodule init",
                 "git submodule update",
             ]
+        if delete_pyc_files:
+            delete_pyc_files += ["find %s -name '*.pyc' -delete" % qd(worker_dir)]
         if master_setup_cmd:
             sync_cmd_list += [master_setup_cmd]
         if sync_cmd_list:
@@ -92,8 +96,6 @@ class StartCeleryWorker(WorkerSetup):
             'cd %s' % qd(worker_dir),
             ' '.join(str(x) for x in celery_args),
         ]
-        # wait if there is an error
-        session_cmd_list += ['read']
         session_cmd = "; ".join(session_cmd_list)
 
         # build final start command

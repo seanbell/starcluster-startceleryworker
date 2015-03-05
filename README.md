@@ -87,6 +87,9 @@ tmux attach -t celery-queue
 ### Other options for start_celery_worker:
 Include these under `[plugin start_gpu_celery_worker]`:
 <pre>
+# Clear out `*.pyc` files before starting the worker (default True)
+delete_pyc_files = True
+
 # Run a command (inside each worker tmux session) before the celery worker starts
 # (e.g. to download a data file to local instance storage inside /mnt/ubuntu)
 worker_setup_cmd = cd /mnt/ubuntu; f=file.npy; wget http://example.com/$f -O $f
