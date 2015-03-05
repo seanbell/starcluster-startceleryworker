@@ -58,7 +58,7 @@ class StartCeleryWorker(WorkerSetup):
                 "git submodule update",
             ]
         if delete_pyc_files:
-            delete_pyc_files += ["find %s -name '*.pyc' -delete" % qd(worker_dir)]
+            sync_cmd_list += ["find %s -name '*.pyc' -delete" % qd(worker_dir)]
         if master_setup_cmd:
             sync_cmd_list += [master_setup_cmd]
         if sync_cmd_list:
