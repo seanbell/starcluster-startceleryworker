@@ -66,7 +66,7 @@ class StartCeleryWorker(WorkerSetup):
 
         # build worker node command
         celery_args = [
-            qs(celery_cmd), 'worker',
+            celery_cmd, 'worker',
             '--hostname', qs('%%h-%s' % queue),
             '--queues', qs(queue),
         ]
