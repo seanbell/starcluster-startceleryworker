@@ -48,9 +48,9 @@ class StartCeleryWorker(WorkerSetup):
 
         # build master sync command
         sync_cmd_list = []
-        if git_sync_dir:
-            if remount_dir.strip():
-                sync_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
+        if remount_dir.strip():
+            sync_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
+        if git_sync_dir.strip():
             sync_cmd_list += [
                 "cd %s" % qd(git_sync_dir),
                 "git pull",
@@ -67,7 +67,7 @@ class StartCeleryWorker(WorkerSetup):
         # build worker node command
         celery_args = [
             celery_cmd, 'worker',
-            '--hostname', qs('%%h-%s' % queue),
+            '--hostname', qs('%%h-PUBLIC_IP_ADDRESS-%s' % queue),
             '--queues', qs(queue),
         ]
         if app.strip():
@@ -112,14 +112,16 @@ class StartCeleryWorker(WorkerSetup):
         self._start_cmd = "; ".join(start_cmd_list)
 
     def on_add_node(self, node, nodes, master, user, user_shell, volumes):
-        run_cmd(node, self._start_cmd, self._user)
+        start_cmd = self._start_cmd.replace('PUBLIC_IP_ADDRESS', node.ip_address)
+        run_cmd(node, start_cmd, self._user)
 
     def run(self, nodes, master, user, user_shell, volumes):
         if self._sync_cmd:
             run_cmd(master, self._sync_cmd, self._user, silent=False)
         for node in nodes:
+            start_cmd = self._start_cmd.replace('PUBLIC_IP_ADDRESS', node.ip_address)
             self.pool.simple_job(
-                run_cmd, args=(node, self._start_cmd, self._user), jobid=node.alias)
+                run_cmd, args=(node, start_cmd, self._user), jobid=node.alias)
         self.pool.wait(len(nodes))
 
 
