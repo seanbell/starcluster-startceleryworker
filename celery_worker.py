@@ -30,7 +30,7 @@ class StartCeleryWorker(WorkerSetup):
             broker='',
             ld_library_path='/usr/local/lib',
             heartbeat_interval='5',
-            maxtasksperchild='1',
+            maxtasksperchild='1024',
             Ofair='True',
             loglevel='info',
             user='ubuntu',
