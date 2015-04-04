@@ -67,6 +67,8 @@ class StartCeleryWorker(WorkerSetup):
         # build worker node command
         celery_args = [
             celery_cmd, 'worker',
+            # the token 'PUBLIC_IP_ADDRESS' will get replaced with the actual
+            # IP -- at this point, we don't know the IP yet.
             '--hostname', qs('%%h-PUBLIC_IP_ADDRESS-%s' % queue),
             '--queues', qs(queue),
         ]
