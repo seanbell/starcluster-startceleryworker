@@ -30,6 +30,7 @@ class StartCeleryWorker(WorkerSetup):
             broker='',
             ld_library_path='/usr/local/lib',
             heartbeat_interval='5',
+            gossip='False',
             maxtasksperchild='1024',
             Ofair='True',
             loglevel='info',
@@ -44,6 +45,7 @@ class StartCeleryWorker(WorkerSetup):
         # error checking
         kill_existing = to_bool(kill_existing)
         delete_pyc_files = to_bool(delete_pyc_files)
+        gossip = to_bool(gossip)
         Ofair = to_bool(Ofair)
 
         # build master sync command
@@ -84,6 +86,8 @@ class StartCeleryWorker(WorkerSetup):
             celery_args += ['--heartbeat-interval', int(heartbeat_interval)]
         if loglevel.strip():
             celery_args += ['--loglevel', qs(loglevel)]
+        if not gossip:
+            celery_args += ['--without-gossip']
         if Ofair:
             celery_args += ['-Ofair']
 
@@ -118,6 +122,7 @@ class StartCeleryWorker(WorkerSetup):
         run_cmd(node, start_cmd, self._user)
 
     def run(self, nodes, master, user, user_shell, volumes):
+        print "StartCeleryWorker.run: %s, %s, %s, %s, %s" % (nodes, master, user, user_shell, volumes)
         if self._sync_cmd:
             run_cmd(master, self._sync_cmd, self._user, silent=False)
         for node in nodes:
