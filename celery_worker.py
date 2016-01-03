@@ -41,7 +41,7 @@ class StartCeleryWorker(WorkerSetup):
             git_pull_cmd='git pull origin master',
             git_submodule_update_cmd='git submodule update --init --recursive',
     ):
-        print 'StartCeleryWorker.__init__(%s)' % (locals(), )
+        print 'StartCeleryWorker.__init__(...)'
 
         self._user = user
 
