@@ -102,6 +102,12 @@ master_setup_cmd = cd ~/caffe; git pull origin dev; make clean; make all; make p
 # the path worker_dir)
 celery_cmd = ../venv/bin/celery
 
+# Use a different command to pull
+git_pull_cmd = git pull origin master
+
+# Use a different command to update submodules
+git_submodule_update_cmd = git submodule update --init --recursive
+
 # Remount the base directory of the NFS filesystem, to be remounted before
 # any code is run (this helps ensure it is up to date).
 # NOTE: This is ignored if kill_existing is not True.
@@ -122,6 +128,10 @@ maxtasksperchild = 1
 
 # Whether to include -Ofair (I find that it helps increase worker utilization).
 Ofair = True
+
+# Whether to use the 'gossip' feature of celery (I disable this by default, but
+# usually it is enabled by default).
+gossip = True
 
 # Celery log level
 loglevel = info

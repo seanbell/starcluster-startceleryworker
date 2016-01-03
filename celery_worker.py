@@ -38,7 +38,10 @@ class StartCeleryWorker(WorkerSetup):
             tmux_history_limit='8000',
             worker_setup_cmd='',
             master_setup_cmd='',
+            git_pull_cmd='git pull origin master',
+            git_submodule_update_cmd='git submodule update --init --recursive',
     ):
+        print 'StartCeleryWorker.__init__(%s)' % (locals(), )
 
         self._user = user
 
@@ -53,12 +56,11 @@ class StartCeleryWorker(WorkerSetup):
         if remount_dir.strip():
             sync_cmd_list += ["sudo mount -o remount %s" % qd(remount_dir)]
         if git_sync_dir.strip():
-            sync_cmd_list += [
-                "cd %s" % qd(git_sync_dir),
-                "git pull",
-                "git submodule init",
-                "git submodule update",
-            ]
+            sync_cmd_list += ["cd %s" % qd(git_sync_dir)]
+            if git_pull_cmd:
+                sync_cmd_list += [git_pull_cmd]
+            if git_submodule_update_cmd:
+                sync_cmd_list += [git_submodule_update_cmd]
         if delete_pyc_files:
             sync_cmd_list += ["find %s -name '*.pyc' -delete" % qd(worker_dir)]
         if master_setup_cmd:
@@ -118,11 +120,12 @@ class StartCeleryWorker(WorkerSetup):
         self._start_cmd = "; ".join(start_cmd_list)
 
     def on_add_node(self, node, nodes, master, user, user_shell, volumes):
+        print 'StartCeleryWorker.on_add_node(...)'
         start_cmd = self._start_cmd.replace('PUBLIC_IP_ADDRESS', node.ip_address)
         run_cmd(node, start_cmd, self._user)
 
     def run(self, nodes, master, user, user_shell, volumes):
-        print "StartCeleryWorker.run: %s, %s, %s, %s, %s" % (nodes, master, user, user_shell, volumes)
+        print "StartCeleryWorker.run(%s, %s, %s, %s, %s)" % (nodes, master, user, user_shell, volumes)
         if self._sync_cmd:
             run_cmd(master, self._sync_cmd, self._user, silent=False)
         for node in nodes:
