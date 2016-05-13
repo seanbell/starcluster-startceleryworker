@@ -56,6 +56,7 @@ class StartCeleryWorker(WorkerSetup):
         # setup to be done as root
         root_init_cmd_list = []
         if setup_docker:
+            root_init_cmd_list += ["service docker start"]
             root_init_cmd_list += ["groupadd -f docker"]
             root_init_cmd_list += ["adduser %s docker" % self._user]
         self._root_init_cmd = "; ".join(root_init_cmd_list)
@@ -112,6 +113,7 @@ class StartCeleryWorker(WorkerSetup):
         session_cmd_list += [
             'cd %s' % qd(worker_dir),
             ' '.join(str(x) for x in celery_args),
+            'read -p done',
         ]
         session_cmd = "; ".join(session_cmd_list)
 
