@@ -40,8 +40,9 @@ class StartCeleryWorker(WorkerSetup):
             master_setup_cmd='',
             git_pull_cmd='git pull origin master',
             git_submodule_update_cmd='git submodule update --init --recursive',
+            setup_docker='False',
     ):
-        print 'StartCeleryWorker.__init__(...)'
+        print 'StartCeleryWorker.__init__(%r)' % locals()
 
         self._user = user
 
@@ -50,6 +51,14 @@ class StartCeleryWorker(WorkerSetup):
         delete_pyc_files = to_bool(delete_pyc_files)
         gossip = to_bool(gossip)
         Ofair = to_bool(Ofair)
+        setup_docker = to_bool(setup_docker)
+
+        # setup to be done as root
+        root_init_cmd_list = []
+        if setup_docker:
+            root_init_cmd_list += ["groupadd -f docker"]
+            root_init_cmd_list += ["adduser %s docker" % self._user]
+        self._root_init_cmd = "; ".join(root_init_cmd_list)
 
         # build master sync command
         sync_cmd_list = []
@@ -121,6 +130,8 @@ class StartCeleryWorker(WorkerSetup):
 
     def on_add_node(self, node, nodes, master, user, user_shell, volumes):
         print 'StartCeleryWorker.on_add_node(...)'
+        if self._root_init_cmd:
+            run_cmd(node, self._root_init_cmd, 'root')
         start_cmd = self._start_cmd.replace('PUBLIC_IP_ADDRESS', node.ip_address)
         run_cmd(node, start_cmd, self._user)
 
@@ -129,6 +140,9 @@ class StartCeleryWorker(WorkerSetup):
         if self._sync_cmd:
             run_cmd(master, self._sync_cmd, self._user, silent=False)
         for node in nodes:
+            if self._root_init_cmd:
+                self.pool.simple_job(
+                    run_cmd, args=(node, self._root_init_cmd, 'root'), jobid=node.alias)
             start_cmd = self._start_cmd.replace('PUBLIC_IP_ADDRESS', node.ip_address)
             self.pool.simple_job(
                 run_cmd, args=(node, start_cmd, self._user), jobid=node.alias)
@@ -187,8 +201,6 @@ def qs(s):
 
 def run_cmd(node, cmd, user, silent=True):
     log.info("%s@%s: %s" % (user, node.alias, cmd))
-    if user != 'root':
-        node.ssh.switch_user(user)
+    node.ssh.switch_user(user)
     node.ssh.execute(cmd, silent=silent)
-    if user != 'root':
-        node.ssh.switch_user('root')
+    node.ssh.switch_user('root')
